@@ -1,6 +1,4 @@
 {
-  "name": "Perspective Test",
-  "description": "Perspective Test",
   "require": {
     "slim/slim": "^3.0"
   }
