@@ -1,6 +1,5 @@
 {
     "require": {
-        "slim/slim": "^3.0",
-        "palanik/corsslim": "*"
+        "slim/slim": "^3.0"
     }
 }
