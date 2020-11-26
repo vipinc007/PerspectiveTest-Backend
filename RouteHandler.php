@@ -30,6 +30,30 @@ $app->get('/users/list', function (Request $request, Response $response) {
     
     return $response->withJson($res, 200);
 });
+
+$app->get('/question/list', function (Request $request, Response $response) {
+    try
+    {
+        $db = new DbHandler();
+        // $data = json_decode($request->getBody());
+        // $username = $data->username;
+        // $password = $data->password;
+        $res = [];
+        
+        $sql = "select * from questions order by id";
+        $result = $db->getRecords($sql);
+        $res["status"] = true;
+        $res['message'] = 'Fetch Success';
+        $res['data'] = $result;
+    }
+    catch(Exception $e) {
+        $res["status"] = false;
+        $res['message'] = $e;
+        $res['data'] = null;
+    }
+    
+    return $response->withJson($res, 200);
+});
 $app->post('/GetUserByID', function (Request $request, Response $response) {
     $db = new DbHandler();
     $data = json_decode($request->getBody());
