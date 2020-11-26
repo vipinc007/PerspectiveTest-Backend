@@ -40,11 +40,13 @@ $app->get('/questions/list', function (Request $request, Response $response) {
         // $password = $data->password;
         $res = [];
         
-        $sql = "select * from questions order by id";
+        $sql = "select * from questions q left join 
+                results r on 
+                (q.id = r.questionid and r.userid is null) order by q.id";
         $result = $db->getRecords($sql);
         $res["status"] = true;
         $res['message'] = 'Fetch Success';
-        $res['data'] = $result;
+        $res['data'] = array("email"=>"","questions"=>$result);
     }
     catch(Exception $e) {
         $res["status"] = false;
