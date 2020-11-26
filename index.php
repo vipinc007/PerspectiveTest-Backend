@@ -2,6 +2,7 @@
 ini_set('max_execution_time', 0);
 require_once 'database/dbHandler.php';
 require 'vendor/autoload.php';
+// require 'middleware/cors.php';
 $configuration = [
     'settings' => [
         'displayErrorDetails' => true,
@@ -10,6 +11,7 @@ $configuration = [
 $c = new \Slim\Container($configuration);
 
 $app = new \Slim\App($c);
+$app->add(new \CorsSlim\CorsSlim());
 require_once "RouteHandler.php";
 $app->run();
 
