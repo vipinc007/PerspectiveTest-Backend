@@ -31,7 +31,7 @@ $app->get('/users/list', function (Request $request, Response $response) {
     return $response->withJson($res, 200);
 });
 
-$app->get('/question/list', function (Request $request, Response $response) {
+$app->get('/questions/list', function (Request $request, Response $response) {
     try
     {
         $db = new DbHandler();
