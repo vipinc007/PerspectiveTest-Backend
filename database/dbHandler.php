@@ -65,11 +65,8 @@ class DbHandler {
     
 	
 	public function executeSQL($query) {
-        
         $r = $this->conn->query($query) or die($this->conn->error.__LINE__);
-
         if ($r) {
-            
             return 1;
             } else {
             return NULL;
@@ -77,17 +74,15 @@ class DbHandler {
     }
 	
 	public function executeInsert($query) {
-        
         $r = $this->conn->query($query) or die($this->conn->error.__LINE__);
-
         if ($r) {
-            
             $new_row_id = $this->conn->insert_id;
             return $new_row_id;
             } else {
             return NULL;
         }
     }
+    
 	
 
 	 

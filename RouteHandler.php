@@ -56,48 +56,82 @@ $app->get('/questions/list', function (Request $request, Response $response) {
     
     return $response->withJson($res, 200);
 });
-$app->post('/GetUserByID', function (Request $request, Response $response) {
+$app->post('/result/save', function (Request $request, Response $response) {
     $db = new DbHandler();
     $data = json_decode($request->getBody());
-    $userid = $data->userid;
+    $email = $data->email;
+    $questions = $data->questions;
+    //return $response->withJson($questions, 200);
 
-    $sql = "select * from Portal_Users  where ID=". $userid."";
-    $result = $db->getOneRecord($sql);
-    if($result!=null)
+    try
     {
+
+        $sql = "insert into users (email) values('".$email."')";
         
-            $res["status"] = "success";
+        $userid = $db->executeInsert($sql);
+        if($userid>0)
+        {
+            foreach ($questions as $question) {
+                $sql = "insert into results (questionid, selectedrank, userid) values(".$question->id.",".$question->selectedrank.",".$userid.")";
+                $db->executeInsert($sql);
+            }
+
+            $res["status"] = true;
             $res['message'] = 'Fetch Success';
-            $res['User'] = $result;
+            $res['data'] = array("userid"=>base64_encode($userid));
+        }
+    }
+    catch(Exception $e) {
+        $res["status"] = false;
+        $res['message'] = $e;
+        $res['data'] = null;
         
     }
     
     return $response->withJson($res, 200);
 });
 
-$app->post('/LoadChannelKwh', function (Request $request, Response $response) {
-    $db = new DbHandler();
-    $data = json_decode($request->getBody());
-    $LoggedUser = $data->LoggedUser;
-    $ParentGroupID = $data->ParentGroupID;
-    $StartDate = $data->StartDate;
-    $EndDate = $data->EndDate;
+$app->get('/result/get/{userid}', function (Request $request, Response $response, array $args) {
+    $userid = $args['userid'];
+    $userid = base64_decode($userid);
+    try
+    {
+        $db = new DbHandler();
+        $res = [];
 
-    $res = [];
-    
-    //select *, gowatt_fn_GetKwh_Used(groupid) kwh from channel where ParentId=
-    // $sql = "select *, 222  kwh from channel where ParentId=".$ParentGroupID;
-    $sql = "select gowatt_fn_GetKwh_Used(".$ParentGroupID.",'".$StartDate."','".$EndDate."',1) kwh, 
-    gowatt_fn_GetKwh_Used(".$ParentGroupID.",'".$StartDate."','".$EndDate."',2) prev_kwh";
+        $sql = "select * 
+                from users 
+                where id=".$userid;
+        $user = $db->getOneRecord($sql);
+        
+        $result = $db->getRecords($sql);
+        
+        $sql = "select q.*, r.selectedrank 
+                from users u 
+                join results r 
+                on (u.id = r.userid) 
+                join questions q on 
+                (q.id = r.questionid)
+                where u.id=".$userid;
+        
+        $result = $db->getRecords($sql);
 
-    $kwhData = $db->getOneRecord($sql);
+        $sql = "select * from perspective";
+        
+        $perspective = $db->getRecords($sql);
 
-    
-    $res['kwhdata'] = $kwhData ;
-    $res["status"] = "success";
-    $res['message'] = 'Fetch Success';
+        $res["status"] = true;
+        $res['message'] = 'Fetch Success';
+        $res['data'] = array("user"=>$user,"answers"=>$result, "perspective"=>$perspective);
+    }
+    catch(Exception $e) {
+        $res["status"] = false;
+        $res['message'] = $e;
+        $res['data'] = null;
+    }
     return $response->withJson($res, 200);
 });
+
 
 
 if ($db != null)
