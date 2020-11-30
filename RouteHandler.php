@@ -172,9 +172,12 @@ $app->get('/result/get/{userid}', function (Request $request, Response $response
         union 
         select id,dimension, leftchar, rightchar,leftname, rightname,
         (
-          case when (select score from ".$table3." t where t.dimension = p.dimension limit 1) is null THEN 
-          left(dimension,1) 
-          else (select score from ".$table3." t where t.dimension = p.dimension limit 1)
+          case when
+            (select count(*) from ".$table3." t where t.dimension = p.dimension)=1
+            AND (select score from ".$table3." t where t.dimension = p.dimension limit 1) is not null 
+          THEN 
+            (select score from ".$table3." t where t.dimension = p.dimension limit 1)
+          else left(dimension,1)
           end 
         ) score,
         -1 from perspective p
