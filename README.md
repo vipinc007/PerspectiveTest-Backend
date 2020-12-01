@@ -1,4 +1,4 @@
-## How to setup storefront-services
+## How to setup the backend service
 
 ### Requirements
 
@@ -29,7 +29,7 @@ You will need to change the database connection configuration in the file "confi
 ### Start a server
 
 - To start the docker container `docker-compose up`
-- App server available at - `http://localhost:8080/`
+- App server available at - `http://localhost:8080/` (this api url is what needs to be configured and used from frontend application)
 
 ### Troubleshooting
 
