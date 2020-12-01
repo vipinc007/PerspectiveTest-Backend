@@ -2,20 +2,12 @@
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 $db = null;
-$app->get('/hello/{name}', function (Request $request, Response $response, array $args) {
-    $name = $args['name'];
-    $res['name'] = "Hello, $name";
-    return $response->withJson($res, 200);
-});
+
 $app->get('/users/list', function (Request $request, Response $response) {
     try
     {
         $db = new DbHandler();
-        // $data = json_decode($request->getBody());
-        // $username = $data->username;
-        // $password = $data->password;
         $res = [];
-        
         $sql = "select * from users";
         $result = $db->getRecords($sql);
         $res["status"] = true;
@@ -35,9 +27,6 @@ $app->get('/questions/list', function (Request $request, Response $response) {
     try
     {
         $db = new DbHandler();
-        // $data = json_decode($request->getBody());
-        // $username = $data->username;
-        // $password = $data->password;
         $res = [];
         
         $sql = "select q.*, r.selectedrank from questions q left join 
@@ -61,7 +50,6 @@ $app->post('/result/save', function (Request $request, Response $response) {
     $data = json_decode($request->getBody());
     $email = $data->email;
     $questions = $data->questions;
-    //return $response->withJson($questions, 200);
 
     try
     {
@@ -136,13 +124,13 @@ $app->get('/result/get/{userid}', function (Request $request, Response $response
         ) score,
         p.id pid,
         p.leftchar, p.rightchar,p.leftname, p.rightname
-      from 
-        results r 
-        join questions q 
-        on (r.questionid=q.id) 
-        join perspective p
-        on (q.dimension = p.dimension)
-      where 
+        from 
+            results r 
+            join questions q 
+            on (r.questionid=q.id) 
+            join perspective p
+            on (q.dimension = p.dimension)
+        where 
         userid=".$userid;
 
         $db->executeSQL($sql1);
